@@ -9,9 +9,9 @@ except ImportError as e:
 
 # Loading models
 try:
-    dia_model = pickle.load(open("./savedModels/Diabetes.sav", 'rb'))
-    heart_model = pickle.load(open("./savedModels/Heart.sav", 'rb'))
-    par_model = pickle.load(open("./savedModels/Parkinsons.sav", 'rb'))
+    dia_model = pickle.load(open("/mnt/data/Diabetes.sav", 'rb'))
+    heart_model = pickle.load(open("/mnt/data/Heart.sav", 'rb'))
+    par_model = pickle.load(open("/mnt/data/Parkinsons.sav", 'rb'))
 except FileNotFoundError as e:
     st.error(f"Error loading model files: {e}")
     raise
@@ -22,21 +22,11 @@ except pickle.UnpicklingError as e:
 # Sidebar for navigation
 with st.sidebar:
     selected = option_menu('E-Doctor Multiple Disease Prediction System',
-                          ['Diabetes Prediction',
-                           'Heart Disease Prediction',
-                           'Parkinsons Prediction'],
-                          icons=['activity', 'heart', 'person'],
-                          default_index=0)
-
-# Function to get prediction and probability
-def get_prediction_and_proba(model, features):
-    if hasattr(model, "predict_proba"):
-        proba = model.predict_proba(features)[0][1] * 100
-        prediction = model.predict(features)
-        return prediction, proba
-    else:
-        prediction = model.predict(features)
-        return prediction, None
+                           ['Diabetes Prediction',
+                            'Heart Disease Prediction',
+                            'Parkinsons Prediction'],
+                           icons=['activity', 'heart', 'person'],
+                           default_index=0)
 
 # Diabetes Prediction Page
 if selected == 'Diabetes Prediction':
@@ -70,23 +60,21 @@ if selected == 'Diabetes Prediction':
 
     # Code for Prediction
     diab_diagnosis = ''
+    diab_probability = 0.0
 
     if st.button('Diabetes Test Result'):
-        features = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
-        diab_prediction, diab_probability = get_prediction_and_proba(dia_model, features)
-        
+        diab_prediction = dia_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
+        diab_prediction_proba = dia_model.predict_proba([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])[0]
+
         if diab_prediction[0] == 1:
-            if diab_probability is not None:
-                diab_diagnosis = f'The person is diabetic with a probability of {diab_probability:.2f}%.'
-            else:
-                diab_diagnosis = 'The person is diabetic.'
+            diab_diagnosis = 'The person is diabetic'
         else:
-            if diab_probability is not None:
-                diab_diagnosis = f'The person is not diabetic with a probability of {100 - diab_probability:.2f}%.'
-            else:
-                diab_diagnosis = 'The person is not diabetic.'
-        
+            diab_diagnosis = 'The person is not diabetic'
+
+        diab_probability = diab_prediction_proba[1] * 100
+
     st.success(diab_diagnosis)
+    st.info(f'Prediction Probability: {diab_probability:.2f}%')
 
 # Heart Disease Prediction Page
 if selected == 'Heart Disease Prediction':
@@ -135,23 +123,21 @@ if selected == 'Heart Disease Prediction':
 
     # Code for Prediction
     heart_diagnosis = ''
+    heart_probability = 0.0
 
     if st.button('Heart Disease Test Result'):
-        features = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
-        heart_prediction, heart_probability = get_prediction_and_proba(heart_model, features)
-        
+        heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
+        heart_prediction_proba = heart_model.predict_proba([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])[0]
+
         if heart_prediction[0] == 1:
-            if heart_probability is not None:
-                heart_diagnosis = f'The person is having heart disease with a probability of {heart_probability:.2f}%.'
-            else:
-                heart_diagnosis = 'The person is having heart disease.'
+            heart_diagnosis = 'The person is having heart disease'
         else:
-            if heart_probability is not None:
-                heart_diagnosis = f'The person does not have any heart disease with a probability of {100 - heart_probability:.2f}%.'
-            else:
-                heart_diagnosis = 'The person does not have any heart disease.'
-        
+            heart_diagnosis = 'The person does not have any heart disease'
+
+        heart_probability = heart_prediction_proba[1] * 100
+
     st.success(heart_diagnosis)
+    st.info(f'Prediction Probability: {heart_probability:.2f}%')
 
 # Parkinson's Prediction Page
 if selected == "Parkinsons Prediction":
@@ -227,20 +213,18 @@ if selected == "Parkinsons Prediction":
 
     # Code for Prediction
     parkinsons_diagnosis = ''
+    parkinsons_probability = 0.0
 
     if st.button("Parkinson's Test Result"):
-        features = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
-        parkinsons_prediction, parkinsons_probability = get_prediction_and_proba(par_model, features)
-        
+        parkinsons_prediction = par_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])
+        parkinsons_prediction_proba = par_model.predict_proba([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])[0]
+
         if parkinsons_prediction[0] == 1:
-            if parkinsons_probability is not None:
-                parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_probability:.2f}%."
-            else:
-                parkinsons_diagnosis = "The person has Parkinson's disease."
+            parkinsons_diagnosis = "The person has Parkinson's disease"
         else:
-            if parkinsons_probability is not None:
-                parkinsons_diagnosis = f"The person does not have Parkinson's disease with a probability of {100 - parkinsons_probability:.2f}%."
-            else:
-                parkinsons_diagnosis = "The person does not have Parkinson's disease."
-        
+            parkinsons_diagnosis = "The person does not have Parkinson's disease"
+
+        parkinsons_probability = parkinsons_prediction_proba[1] * 100
+
     st.success(parkinsons_diagnosis)
+    st.info(f'Prediction Probability: {parkinsons_probability:.2f}%')
