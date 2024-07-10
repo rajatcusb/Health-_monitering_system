@@ -21,12 +21,12 @@ except pickle.UnpicklingError as e:
 
 # Sidebar for navigation
 with st.sidebar:
-    selected = option_menu('E- Doctor Multiple Disease Prediction System',
-                           ['Diabetes Prediction',
-                            'Heart Disease Prediction',
-                            'Parkinsons Prediction'],
-                           icons=['activity', 'heart', 'person'],
-                           default_index=0)
+    selected = option_menu('E-Doctor Multiple Disease Prediction System',
+                          ['Diabetes Prediction',
+                           'Heart Disease Prediction',
+                           'Parkinsons Prediction'],
+                          icons=['activity', 'heart', 'person'],
+                          default_index=0)
 
 # Diabetes Prediction Page
 if selected == 'Diabetes Prediction':
@@ -125,5 +125,100 @@ if selected == 'Heart Disease Prediction':
     if st.button('Heart Disease Test Result'):
         heart_prediction_proba = heart_model.predict_proba([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
         heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
+        
+        heart_probability = heart_prediction_proba[0][1] * 100  # Probability of having heart disease
+        
+        if heart_prediction[0] == 1:
+            heart_diagnosis = f'The person is having heart disease with a probability of {heart_probability:.2f}%.'
+        else:
+            heart_diagnosis = f'The person does not have any heart disease with a probability of {100 - heart_probability:.2f}%.'
+        
+    st.success(heart_diagnosis)
 
-        heart_probability = heart_prediction_proba[0][1
+# Parkinson's Prediction Page
+if selected == "Parkinsons Prediction":
+    st.title("Parkinson's Disease Prediction using ML")
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+
+    with col1:
+        fo = st.text_input('MDVP:Fo(Hz)')
+
+    with col2:
+        fhi = st.text_input('MDVP:Fhi(Hz)')
+
+    with col3:
+        flo = st.text_input('MDVP:Flo(Hz)')
+
+    with col4:
+        Jitter_percent = st.text_input('MDVP:Jitter(%)')
+
+    with col5:
+        Jitter_Abs = st.text_input('MDVP:Jitter(Abs)')
+
+    with col1:
+        RAP = st.text_input('MDVP:RAP')
+
+    with col2:
+        PPQ = st.text_input('MDVP:PPQ')
+
+    with col3:
+        DDP = st.text_input('Jitter:DDP')
+
+    with col4:
+        Shimmer = st.text_input('MDVP:Shimmer')
+
+    with col5:
+        Shimmer_dB = st.text_input('MDVP:Shimmer(dB)')
+
+    with col1:
+        APQ3 = st.text_input('Shimmer:APQ3')
+
+    with col2:
+        APQ5 = st.text_input('Shimmer:APQ5')
+
+    with col3:
+        APQ = st.text_input('MDVP:APQ')
+
+    with col4:
+        DDA = st.text_input('Shimmer:DDA')
+
+    with col5:
+        NHR = st.text_input('NHR')
+
+    with col1:
+        HNR = st.text_input('HNR')
+
+    with col2:
+        RPDE = st.text_input('RPDE')
+
+    with col3:
+        DFA = st.text_input('DFA')
+
+    with col4:
+        spread1 = st.text_input('spread1')
+
+    with col5:
+        spread2 = st.text_input('spread2')
+
+    with col1:
+        D2 = st.text_input('D2')
+
+    with col2:
+        PPE = st.text_input('PPE')
+
+    # Code for Prediction
+    parkinsons_diagnosis = ''
+
+    if st.button("Parkinson's Test Result"):
+        parkinsons_prediction_proba = par_model.predict_proba([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])
+        parkinsons_prediction = par_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])
+        
+        parkinsons_probability = parkinsons_prediction_proba[0][1] * 100  # Probability of having Parkinson's disease
+        
+        if parkinsons_prediction[0] == 1:
+            parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_probability:.2f}%."
+        else:
+            parkinsons_diagnosis = f"The person does not have Parkinson's disease with a probability of {100 - parkinsons_probability:.2f}%."
+        
+    st.success(parkinsons_diagnosis)
