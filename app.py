@@ -9,9 +9,9 @@ except ImportError as e:
 
 # Loading models
 try:
-    dia_model = pickle.load(open("./savedModels/Diabetes.sav", 'rb'))
-    heart_model = pickle.load(open("./savedModels/Heart.sav", 'rb'))
-    par_model = pickle.load(open("./savedModels/Parkinsons.sav", 'rb'))
+    dia_model = pickle.load(open("/mnt/data/Diabetes.sav", 'rb'))
+    heart_model = pickle.load(open("/mnt/data/Heart.sav", 'rb'))
+    par_model = pickle.load(open("/mnt/data/Parkinsons.sav", 'rb'))
 except FileNotFoundError as e:
     st.error(f"Error loading model files: {e}")
     raise
