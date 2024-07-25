@@ -1,34 +1,26 @@
-# impor necessary libraaries
 import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
 
 # Loading models
-
 dia_model = pickle.load(open("./savedModels/Diabetes.sav",'rb'))
 heart_model = pickle.load(open("./savedModels/Heart.sav",'rb'))
 par_model = pickle.load(open("./savedModels/Parkinsons.sav",'rb'))
 
-# sidebar for navigation
+# Sidebar for navigation
 with st.sidebar:
-    
-    selected = option_menu('E- Doctor System',
-                          
+    selected = option_menu('E-Doctor System',
                           ['Diabetes Screening',
                            'Heart Health Screening',
                            'Parkinsons Screening'],
                           icons=['activity','heart','person'],
                           default_index=0)
-    
-    
+
 # Diabetes Prediction Page
-if (selected == 'Diabetes Screening'):
-    
-    # page title
+if selected == 'Diabetes Screening':
     st.title('Provide Information for Diabetes Prediction')
     
-    
-    # getting the input data from the user
+    # Getting the input data from the user
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -55,29 +47,19 @@ if (selected == 'Diabetes Screening'):
     with col2:
         Age = st.text_input('Age of the Person')
     
-    
-    # code for Prediction
+    # Code for Prediction
     diab_diagnosis = ''
     
-    # creating a button for Prediction
-    
+    # Creating a button for Prediction
     if st.button('Diabetes Test Result'):
-        diab_prediction = dia_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
-        
-        if (diab_prediction[0] == 1):
-          diab_diagnosis = 'The person is diabetic'
-        else:
-          diab_diagnosis = 'The person is not diabetic'
+        diab_prediction_proba = dia_model.predict_proba([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])[0]
+        diab_prediction = diab_prediction_proba[1]
+        diab_diagnosis = f'The person is diabetic with a probability of {diab_prediction*100:.2f}%'
         
     st.success(diab_diagnosis)
 
-
-
-
 # Heart Disease Prediction Page
-if (selected == 'Heart Health Screening'):
-    
-    # page title
+if selected == 'Heart Health Screening':
     st.title('Provide Information for Heart Analysis')
     
     col1, col2, col3 = st.columns(3)
@@ -121,34 +103,22 @@ if (selected == 'Heart Health Screening'):
     with col1:
         thal = st.text_input('thal: 0 = normal; 1 = fixed defect; 2 = reversable defect')
         
-        
-     
-     
-    # code for Prediction
+    # Code for Prediction
     heart_diagnosis = ''
     
-    # creating a button for Prediction
-    
+    # Creating a button for Prediction
     if st.button('Heart Disease Test Result'):
-        heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,thalach,exang,oldpeak,slope,ca,thal]])                          
-        
-        if (heart_prediction[0] == 1):
-          heart_diagnosis = 'The person is having heart disease'
-        else:
-          heart_diagnosis = 'The person does not have any heart disease'
+        heart_prediction_proba = heart_model.predict_proba([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])[0]
+        heart_prediction = heart_prediction_proba[1]
+        heart_diagnosis = f'The person has heart disease with a probability of {heart_prediction*100:.2f}%'
         
     st.success(heart_diagnosis)
-        
-    
-    
 
 # Parkinson's Prediction Page
-if (selected == "Parkinsons Screening"):
-    
-    # page title
+if selected == "Parkinsons Screening":
     st.title("Provide Information for Parkinsons Analysis")
     
-    col1, col2, col3, col4, col5 = st.columns(5)  
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         fo = st.text_input('MDVP:Fo(Hz)')
@@ -216,19 +186,13 @@ if (selected == "Parkinsons Screening"):
     with col2:
         PPE = st.text_input('PPE')
         
-    
-    
-    # code for Prediction
+    # Code for Prediction
     parkinsons_diagnosis = ''
     
-    # creating a button for Prediction    
+    # Creating a button for Prediction
     if st.button("Parkinson's Test Result"):
-        parkinsons_prediction = par_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,DDP,Shimmer,Shimmer_dB,APQ3,APQ5,APQ,DDA,NHR,HNR,RPDE,DFA,spread1,spread2,D2,PPE]])                          
+        parkinsons_prediction_proba = par_model.predict_proba([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])[0]
+        parkinsons_prediction = parkinsons_prediction_proba[1]
+        parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_prediction*100:.2f}%"
         
-        if (parkinsons_prediction[0] == 1):
-          parkinsons_diagnosis = "The person has Parkinson's disease"
-        else:
-          parkinsons_diagnosis = "The person does not have Parkinson's disease"
-        
-    st.success(parkinsons_diagnosis)  
-
+    st.success(parkinsons_diagnosis)
