@@ -7,6 +7,14 @@ dia_model = pickle.load(open("./savedModels/Diabetes.sav",'rb'))
 heart_model = pickle.load(open("./savedModels/Heart.sav",'rb'))
 par_model = pickle.load(open("./savedModels/Parkinsons.sav",'rb'))
 
+def get_prediction(model, input_data):
+    if hasattr(model, 'predict_proba'):
+        prediction_proba = model.predict_proba(input_data)[0]
+        return prediction_proba[1]
+    else:
+        prediction = model.predict(input_data)
+        return prediction[0]
+
 # Sidebar for navigation
 with st.sidebar:
     selected = option_menu('E-Doctor System',
@@ -20,7 +28,6 @@ with st.sidebar:
 if selected == 'Diabetes Screening':
     st.title('Provide Information for Diabetes Prediction')
     
-    # Getting the input data from the user
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -47,14 +54,15 @@ if selected == 'Diabetes Screening':
     with col2:
         Age = st.text_input('Age of the Person')
     
-    # Code for Prediction
     diab_diagnosis = ''
     
-    # Creating a button for Prediction
     if st.button('Diabetes Test Result'):
-        diab_prediction_proba = dia_model.predict_proba([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])[0]
-        diab_prediction = diab_prediction_proba[1]
-        diab_diagnosis = f'The person is diabetic with a probability of {diab_prediction*100:.2f}%'
+        input_data = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
+        diab_prediction = get_prediction(dia_model, input_data)
+        if hasattr(dia_model, 'predict_proba'):
+            diab_diagnosis = f'The person is diabetic with a probability of {diab_prediction*100:.2f}%'
+        else:
+            diab_diagnosis = 'The person is diabetic' if diab_prediction == 1 else 'The person is not diabetic'
         
     st.success(diab_diagnosis)
 
@@ -103,14 +111,15 @@ if selected == 'Heart Health Screening':
     with col1:
         thal = st.text_input('thal: 0 = normal; 1 = fixed defect; 2 = reversable defect')
         
-    # Code for Prediction
     heart_diagnosis = ''
     
-    # Creating a button for Prediction
     if st.button('Heart Disease Test Result'):
-        heart_prediction_proba = heart_model.predict_proba([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])[0]
-        heart_prediction = heart_prediction_proba[1]
-        heart_diagnosis = f'The person has heart disease with a probability of {heart_prediction*100:.2f}%'
+        input_data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
+        heart_prediction = get_prediction(heart_model, input_data)
+        if hasattr(heart_model, 'predict_proba'):
+            heart_diagnosis = f'The person has heart disease with a probability of {heart_prediction*100:.2f}%'
+        else:
+            heart_diagnosis = 'The person has heart disease' if heart_prediction == 1 else 'The person does not have heart disease'
         
     st.success(heart_diagnosis)
 
@@ -186,13 +195,14 @@ if selected == "Parkinsons Screening":
     with col2:
         PPE = st.text_input('PPE')
         
-    # Code for Prediction
     parkinsons_diagnosis = ''
     
-    # Creating a button for Prediction
     if st.button("Parkinson's Test Result"):
-        parkinsons_prediction_proba = par_model.predict_proba([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])[0]
-        parkinsons_prediction = parkinsons_prediction_proba[1]
-        parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_prediction*100:.2f}%"
+        input_data = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
+        parkinsons_prediction = get_prediction(par_model, input_data)
+        if hasattr(par_model, 'predict_proba'):
+            parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_prediction*100:.2f}%"
+        else:
+            parkinsons_diagnosis = "The person has Parkinson's disease" if parkinsons_prediction == 1 else "The person does not have Parkinson's disease"
         
     st.success(parkinsons_diagnosis)
