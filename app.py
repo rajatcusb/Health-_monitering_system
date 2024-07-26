@@ -3,9 +3,9 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 # Loading models
-dia_model = pickle.load(open("./savedModels/Diabetes.sav",'rb'))
-heart_model = pickle.load(open("./savedModels/Heart.sav",'rb'))
-par_model = pickle.load(open("./savedModels/Parkinsons.sav",'rb'))
+dia_model = pickle.load(open("./savedModels/Diabetes.sav", 'rb'))
+heart_model = pickle.load(open("./savedModels/Heart.sav", 'rb'))
+par_model = pickle.load(open("./savedModels/Parkinsons.sav", 'rb'))
 
 def get_prediction(model, input_data):
     if hasattr(model, 'predict_proba'):
@@ -18,11 +18,11 @@ def get_prediction(model, input_data):
 # Sidebar for navigation
 with st.sidebar:
     selected = option_menu('E-Doctor System',
-                          ['Diabetes Screening',
-                           'Heart Health Screening',
-                           'Parkinsons Screening'],
-                          icons=['activity','heart','person'],
-                          default_index=0)
+                           ['Diabetes Screening',
+                            'Heart Health Screening',
+                            'Parkinsons Screening'],
+                           icons=['activity', 'heart', 'person'],
+                           default_index=0)
 
 # Diabetes Prediction Page
 if selected == 'Diabetes Screening':
@@ -59,12 +59,17 @@ if selected == 'Diabetes Screening':
     if st.button('Diabetes Test Result'):
         input_data = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
         diab_prediction = get_prediction(dia_model, input_data)
-        if hasattr(dia_model, 'predict_proba'):
-            diab_diagnosis = f'The person is diabetic with a probability of {diab_prediction*100:.2f}%'
+        diab_prediction_percentage = diab_prediction * 100
+        
+        if diab_prediction >= 0.5:
+            diab_diagnosis = f'The person is diabetic with a probability of {diab_prediction_percentage:.2f}%'
         else:
-            diab_diagnosis = 'The person is diabetic' if diab_prediction == 1 else 'The person is not diabetic'
+            diab_diagnosis = f'The person is not diabetic with a probability of {100 - diab_prediction_percentage:.2f}%'
         
     st.success(diab_diagnosis)
+
+
+
 
 # Heart Disease Prediction Page
 if selected == 'Heart Health Screening':
