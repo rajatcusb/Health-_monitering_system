@@ -2,7 +2,6 @@ import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 
 # Load models
 dia_model = pickle.load(open("./savedModels/Diabetes.sav", 'rb'))
@@ -16,14 +15,6 @@ def get_prediction(model, input_data):
     else:
         prediction = model.predict(input_data)
         return prediction[0]
-
-def normalize_input(input_data, scaler):
-    return scaler.transform(input_data)
-
-# Assuming you have saved scalers from training data normalization
-dia_scaler = pickle.load(open("./savedModels/Diabetes_scaler.sav", 'rb'))
-heart_scaler = pickle.load(open("./savedModels/Heart_scaler.sav", 'rb'))
-par_scaler = pickle.load(open("./savedModels/Parkinsons_scaler.sav", 'rb'))
 
 # Sidebar for navigation
 with st.sidebar:
@@ -78,7 +69,6 @@ if selected == 'Diabetes Screening':
                 float(DiabetesPedigreeFunction) if DiabetesPedigreeFunction else 0.0,
                 float(Age) if Age else 0.0
             ]])
-            input_data = normalize_input(input_data, dia_scaler)
             diab_prediction = get_prediction(dia_model, input_data)
             diab_prediction_percentage = diab_prediction * 100
             
@@ -157,7 +147,6 @@ if selected == 'Heart Health Screening':
                 float(ca) if ca else 0.0,
                 float(thal) if thal else 0.0
             ]])
-            input_data = normalize_input(input_data, heart_scaler)
             heart_prediction = get_prediction(heart_model, input_data)
             heart_prediction_percentage = heart_prediction * 100
             
@@ -272,7 +261,6 @@ if selected == "Parkinsons Screening":
                 float(D2) if D2 else 0.0,
                 float(PPE) if PPE else 0.0
             ]])
-            input_data = normalize_input(input_data, par_scaler)
             parkinsons_prediction = get_prediction(par_model, input_data)
             parkinsons_prediction_percentage = parkinsons_prediction * 100
             
