@@ -120,7 +120,7 @@ if selected == 'Heart Health Screening':
     if st.button('Heart Disease Test Result'):
         input_data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
         heart_prediction = get_prediction(heart_model, input_data)
-        heart_prediction_percentage = heart_prediction * 100
+        heart_prediction_percentage = heart_prediction * 50
         
         if heart_prediction_percentage >= 50:
             heart_diagnosis = (f'The person is predicted to have heart disease with a confidence interval of '
@@ -208,7 +208,7 @@ if selected == "Parkinsons Screening":
     if st.button("Parkinson's Test Result"):
         input_data = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
         parkinsons_prediction = get_prediction(par_model, input_data)
-        parkinsons_prediction_percentage = parkinsons_prediction * 100
+        parkinsons_prediction_percentage = parkinsons_prediction * 50
         
         if parkinsons_prediction_percentage >= 50:
             parkinsons_diagnosis = (f"The person is predicted to have Parkinson's disease with a confidence interval of "
