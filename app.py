@@ -3,26 +3,26 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 # Loading models
-dia_model = pickle.load(open("./savedModels/Diabetes.sav", 'rb'))
-heart_model = pickle.load(open("./savedModels/Heart.sav", 'rb'))
-par_model = pickle.load(open("./savedModels/Parkinsons.sav", 'rb'))
+dia_model = pickle.load(open("./savedModels/Diabetes.sav",'rb'))
+heart_model = pickle.load(open("./savedModels/Heart.sav",'rb'))
+par_model = pickle.load(open("./savedModels/Parkinsons.sav",'rb'))
 
 def get_prediction(model, input_data):
     if hasattr(model, 'predict_proba'):
         prediction_proba = model.predict_proba(input_data)[0]
-        return prediction_proba[1]
+        return model.predict(input_data)[0], prediction_proba[1]
     else:
         prediction = model.predict(input_data)
-        return prediction[0]
+        return prediction[0], None
 
 # Sidebar for navigation
 with st.sidebar:
     selected = option_menu('E-Doctor System',
-                           ['Diabetes Screening',
-                            'Heart Health Screening',
-                            'Parkinsons Screening'],
-                           icons=['activity', 'heart', 'person'],
-                           default_index=0)
+                          ['Diabetes Screening',
+                           'Heart Health Screening',
+                           'Parkinsons Screening'],
+                          icons=['activity','heart','person'],
+                          default_index=0)
 
 # Diabetes Prediction Page
 if selected == 'Diabetes Screening':
@@ -58,15 +58,15 @@ if selected == 'Diabetes Screening':
     
     if st.button('Diabetes Test Result'):
         input_data = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
-        diab_prediction = get_prediction(dia_model, input_data)
-        diab_prediction_percentage = diab_prediction * 50
+        diab_prediction, diab_probability = get_prediction(dia_model, input_data)
         
-        if diab_prediction_percentage >= 50:
-            diab_diagnosis = (f'The person is predicted to be diabetic with a confidence interval of '
-                              f'{diab_prediction_percentage:.2f}%.')
+        if diab_probability is not None:
+            if diab_probability >= 0.50:
+                diab_diagnosis = f'The person is diabetic with a probability of {diab_probability*100:.2f}%'
+            else:
+                diab_diagnosis = f'The person is not diabetic with a probability of {diab_probability*100:.2f}%'
         else:
-            diab_diagnosis = (f'The person is predicted to not be diabetic with a confidence interval of '
-                              f'{100 - diab_prediction_percentage:.2f}%.')
+            diab_diagnosis = 'The person is diabetic' if diab_prediction == 1 else 'The person is not diabetic'
         
     st.success(diab_diagnosis)
 
@@ -119,15 +119,11 @@ if selected == 'Heart Health Screening':
     
     if st.button('Heart Disease Test Result'):
         input_data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
-        heart_prediction = get_prediction(heart_model, input_data)
-        heart_prediction_percentage = heart_prediction * 50
-        
-        if heart_prediction_percentage >= 50:
-            heart_diagnosis = (f'The person is predicted to have heart disease with a confidence interval of '
-                               f'{heart_prediction_percentage:.2f}%.')
+        heart_prediction, heart_probability = get_prediction(heart_model, input_data)
+        if heart_probability is not None:
+            heart_diagnosis = f'The person has heart disease with a probability of {heart_probability*100:.2f}%'
         else:
-            heart_diagnosis = (f'The person is predicted to not have heart disease with a confidence interval of '
-                               f'{100 - heart_prediction_percentage:.2f}%.')
+            heart_diagnosis = 'The person has heart disease' if heart_prediction == 1 else 'The person does not have heart disease'
         
     st.success(heart_diagnosis)
 
@@ -207,14 +203,10 @@ if selected == "Parkinsons Screening":
     
     if st.button("Parkinson's Test Result"):
         input_data = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
-        parkinsons_prediction = get_prediction(par_model, input_data)
-        parkinsons_prediction_percentage = parkinsons_prediction * 50
-        
-        if parkinsons_prediction_percentage >= 50:
-            parkinsons_diagnosis = (f"The person is predicted to have Parkinson's disease with a confidence interval of "
-                                    f"{parkinsons_prediction_percentage:.2f}%.")
+        parkinsons_prediction, parkinsons_probability = get_prediction(par_model, input_data)
+        if parkinsons_probability is not None:
+            parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_probability*100:.2f}%"
         else:
-            parkinsons_diagnosis = (f"The person is predicted to not have Parkinson's disease with a confidence interval of "
-                                    f"{100 - parkinsons_prediction_percentage:.2f}%.")
+            parkinsons_diagnosis = "The person has Parkinson's disease" if parkinsons_prediction == 1 else "The person does not have Parkinson's disease"
         
     st.success(parkinsons_diagnosis)
