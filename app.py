@@ -60,16 +60,16 @@ if selected == 'Diabetes Screening':
         input_data = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
         diab_prediction = get_prediction(dia_model, input_data)
         diab_prediction_percentage = diab_prediction * 100
+        not_diab_prediction_percentage = 100 - diab_prediction_percentage
         
         if diab_prediction >= 0.5:
-            diab_diagnosis = f'The person is diabetic with a probability of {diab_prediction_percentage:.2f}%'
+            diab_diagnosis = (f'The person is predicted to be diabetic with a confidence interval of '
+                              f'{diab_prediction_percentage:.2f}%.')
         else:
-            diab_diagnosis = f'The person is not diabetic with a probability of {100 - diab_prediction_percentage:.2f}%'
+            diab_diagnosis = (f'The person is predicted to not be diabetic with a confidence interval of '
+                              f'{not_diab_prediction_percentage:.2f}%.')
         
     st.success(diab_diagnosis)
-
-
-
 
 # Heart Disease Prediction Page
 if selected == 'Heart Health Screening':
@@ -121,10 +121,15 @@ if selected == 'Heart Health Screening':
     if st.button('Heart Disease Test Result'):
         input_data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
         heart_prediction = get_prediction(heart_model, input_data)
-        if hasattr(heart_model, 'predict_proba'):
-            heart_diagnosis = f'The person has heart disease with a probability of {heart_prediction*100:.2f}%'
+        heart_prediction_percentage = heart_prediction * 100
+        not_heart_prediction_percentage = 100 - heart_prediction_percentage
+        
+        if heart_prediction >= 0.5:
+            heart_diagnosis = (f'The person is predicted to have heart disease with a confidence interval of '
+                               f'{heart_prediction_percentage:.2f}%.')
         else:
-            heart_diagnosis = 'The person has heart disease' if heart_prediction == 1 else 'The person does not have heart disease'
+            heart_diagnosis = (f'The person is predicted to not have heart disease with a confidence interval of '
+                               f'{not_heart_prediction_percentage:.2f}%.')
         
     st.success(heart_diagnosis)
 
@@ -205,9 +210,14 @@ if selected == "Parkinsons Screening":
     if st.button("Parkinson's Test Result"):
         input_data = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
         parkinsons_prediction = get_prediction(par_model, input_data)
-        if hasattr(par_model, 'predict_proba'):
-            parkinsons_diagnosis = f"The person has Parkinson's disease with a probability of {parkinsons_prediction*100:.2f}%"
+        parkinsons_prediction_percentage = parkinsons_prediction * 100
+        not_parkinsons_prediction_percentage = 100 - parkinsons_prediction_percentage
+        
+        if parkinsons_prediction >= 0.5:
+            parkinsons_diagnosis = (f"The person is predicted to have Parkinson's disease with a confidence interval of "
+                                    f"{parkinsons_prediction_percentage:.2f}%.")
         else:
-            parkinsons_diagnosis = "The person has Parkinson's disease" if parkinsons_prediction == 1 else "The person does not have Parkinson's disease"
+            parkinsons_diagnosis = (f"The person is predicted to not have Parkinson's disease with a confidence interval of "
+                                    f"{not_parkinsons_prediction_percentage:.2f}%.")
         
     st.success(parkinsons_diagnosis)
