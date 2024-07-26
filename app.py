@@ -60,14 +60,13 @@ if selected == 'Diabetes Screening':
         input_data = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
         diab_prediction = get_prediction(dia_model, input_data)
         diab_prediction_percentage = diab_prediction * 100
-        not_diab_prediction_percentage = 100 - diab_prediction_percentage
         
-        if diab_prediction >= 0.5:
+        if diab_prediction_percentage >= 50:
             diab_diagnosis = (f'The person is predicted to be diabetic with a confidence interval of '
                               f'{diab_prediction_percentage:.2f}%.')
         else:
             diab_diagnosis = (f'The person is predicted to not be diabetic with a confidence interval of '
-                              f'{not_diab_prediction_percentage:.2f}%.')
+                              f'{100 - diab_prediction_percentage:.2f}%.')
         
     st.success(diab_diagnosis)
 
@@ -122,14 +121,13 @@ if selected == 'Heart Health Screening':
         input_data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
         heart_prediction = get_prediction(heart_model, input_data)
         heart_prediction_percentage = heart_prediction * 100
-        not_heart_prediction_percentage = 100 - heart_prediction_percentage
         
-        if heart_prediction >= 0.5:
+        if heart_prediction_percentage >= 50:
             heart_diagnosis = (f'The person is predicted to have heart disease with a confidence interval of '
                                f'{heart_prediction_percentage:.2f}%.')
         else:
             heart_diagnosis = (f'The person is predicted to not have heart disease with a confidence interval of '
-                               f'{not_heart_prediction_percentage:.2f}%.')
+                               f'{100 - heart_prediction_percentage:.2f}%.')
         
     st.success(heart_diagnosis)
 
@@ -211,13 +209,12 @@ if selected == "Parkinsons Screening":
         input_data = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
         parkinsons_prediction = get_prediction(par_model, input_data)
         parkinsons_prediction_percentage = parkinsons_prediction * 100
-        not_parkinsons_prediction_percentage = 100 - parkinsons_prediction_percentage
         
-        if parkinsons_prediction >= 0.5:
+        if parkinsons_prediction_percentage >= 50:
             parkinsons_diagnosis = (f"The person is predicted to have Parkinson's disease with a confidence interval of "
                                     f"{parkinsons_prediction_percentage:.2f}%.")
         else:
             parkinsons_diagnosis = (f"The person is predicted to not have Parkinson's disease with a confidence interval of "
-                                    f"{not_parkinsons_prediction_percentage:.2f}%.")
+                                    f"{100 - parkinsons_prediction_percentage:.2f}%.")
         
     st.success(parkinsons_diagnosis)
