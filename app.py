@@ -57,16 +57,32 @@ if selected == 'Diabetes Screening':
     diab_diagnosis = ''
     
     if st.button('Diabetes Test Result'):
-        input_data = [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]]
-        diab_prediction = get_prediction(dia_model, input_data)
-        diab_prediction_percentage = diab_prediction * 100
+        # Ensure all inputs are provided and converted to float
+        try:
+            input_data = [[
+                float(Pregnancies) if Pregnancies else 0.0,
+                float(Glucose) if Glucose else 0.0,
+                float(BloodPressure) if BloodPressure else 0.0,
+                float(SkinThickness) if SkinThickness else 0.0,
+                float(Insulin) if Insulin else 0.0,
+                float(BMI) if BMI else 0.0,
+                float(DiabetesPedigreeFunction) if DiabetesPedigreeFunction else 0.0,
+                float(Age) if Age else 0.0
+            ]]
+        except ValueError:
+            st.error("Please enter valid numeric values for all fields.")
+            input_data = None
         
-        if diab_prediction_percentage >= 50:
-            diab_diagnosis = (f'The person is predicted to be diabetic with a confidence interval of '
-                              f'{diab_prediction_percentage:.2f}%.')
-        else:
-            diab_diagnosis = (f'The person is predicted to not be diabetic with a confidence interval of '
-                              f'{100 - diab_prediction_percentage:.2f}%.')
+        if input_data:
+            diab_prediction = get_prediction(dia_model, input_data)
+            diab_prediction_percentage = diab_prediction * 100
+            
+            if diab_prediction_percentage >= 50:
+                diab_diagnosis = (f'The person is predicted to be diabetic with a confidence interval of '
+                                  f'{diab_prediction_percentage:.2f}%.')
+            else:
+                diab_diagnosis = (f'The person is predicted to not be diabetic with a confidence interval of '
+                                  f'{100 - diab_prediction_percentage:.2f}%.')
         
     st.success(diab_diagnosis)
 
@@ -118,16 +134,37 @@ if selected == 'Heart Health Screening':
     heart_diagnosis = ''
     
     if st.button('Heart Disease Test Result'):
-        input_data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
-        heart_prediction = get_prediction(heart_model, input_data)
-        heart_prediction_percentage = heart_prediction * 100
+        # Ensure all inputs are provided and converted to float
+        try:
+            input_data = [[
+                float(age) if age else 0.0,
+                float(sex) if sex else 0.0,
+                float(cp) if cp else 0.0,
+                float(trestbps) if trestbps else 0.0,
+                float(chol) if chol else 0.0,
+                float(fbs) if fbs else 0.0,
+                float(restecg) if restecg else 0.0,
+                float(thalach) if thalach else 0.0,
+                float(exang) if exang else 0.0,
+                float(oldpeak) if oldpeak else 0.0,
+                float(slope) if slope else 0.0,
+                float(ca) if ca else 0.0,
+                float(thal) if thal else 0.0
+            ]]
+        except ValueError:
+            st.error("Please enter valid numeric values for all fields.")
+            input_data = None
         
-        if heart_prediction_percentage >= 50:
-            heart_diagnosis = (f'The person is predicted to have heart disease with a confidence interval of '
-                               f'{heart_prediction_percentage:.2f}%.')
-        else:
-            heart_diagnosis = (f'The person is predicted to not have heart disease with a confidence interval of '
-                               f'{100 - heart_prediction_percentage:.2f}%.')
+        if input_data:
+            heart_prediction = get_prediction(heart_model, input_data)
+            heart_prediction_percentage = heart_prediction * 100
+            
+            if heart_prediction_percentage >= 50:
+                heart_diagnosis = (f'The person is predicted to have heart disease with a confidence interval of '
+                                   f'{heart_prediction_percentage:.2f}%.')
+            else:
+                heart_diagnosis = (f'The person is predicted to not have heart disease with a confidence interval of '
+                                   f'{100 - heart_prediction_percentage:.2f}%.')
         
     st.success(heart_diagnosis)
 
@@ -206,15 +243,45 @@ if selected == "Parkinsons Screening":
     parkinsons_diagnosis = ''
     
     if st.button("Parkinson's Test Result"):
-        input_data = [[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]]
-        parkinsons_prediction = get_prediction(par_model, input_data)
-        parkinsons_prediction_percentage = parkinsons_prediction * 100
+        # Ensure all inputs are provided and converted to float
+        try:
+            input_data = [[
+                float(fo) if fo else 0.0,
+                float(fhi) if fhi else 0.0,
+                float(flo) if flo else 0.0,
+                float(Jitter_percent) if Jitter_percent else 0.0,
+                float(Jitter_Abs) if Jitter_Abs else 0.0,
+                float(RAP) if RAP else 0.0,
+                float(PPQ) if PPQ else 0.0,
+                float(DDP) if DDP else 0.0,
+                float(Shimmer) if Shimmer else 0.0,
+                float(Shimmer_dB) if Shimmer_dB else 0.0,
+                float(APQ3) if APQ3 else 0.0,
+                float(APQ5) if APQ5 else 0.0,
+                float(APQ) if APQ else 0.0,
+                float(DDA) if DDA else 0.0,
+                float(NHR) if NHR else 0.0,
+                float(HNR) if HNR else 0.0,
+                float(RPDE) if RPDE else 0.0,
+                float(DFA) if DFA else 0.0,
+                float(spread1) if spread1 else 0.0,
+                float(spread2) if spread2 else 0.0,
+                float(D2) if D2 else 0.0,
+                float(PPE) if PPE else 0.0
+            ]]
+        except ValueError:
+            st.error("Please enter valid numeric values for all fields.")
+            input_data = None
         
-        if parkinsons_prediction_percentage >= 50:
-            parkinsons_diagnosis = (f"The person is predicted to have Parkinson's disease with a confidence interval of "
-                                    f"{parkinsons_prediction_percentage:.2f}%.")
-        else:
-            parkinsons_diagnosis = (f"The person is predicted to not have Parkinson's disease with a confidence interval of "
-                                    f"{100 - parkinsons_prediction_percentage:.2f}%.")
+        if input_data:
+            parkinsons_prediction = get_prediction(par_model, input_data)
+            parkinsons_prediction_percentage = parkinsons_prediction * 100
+            
+            if parkinsons_prediction_percentage >= 50:
+                parkinsons_diagnosis = (f"The person is predicted to have Parkinson's disease with a confidence interval of "
+                                        f"{parkinsons_prediction_percentage:.2f}%.")
+            else:
+                parkinsons_diagnosis = (f"The person is predicted to not have Parkinson's disease with a confidence interval of "
+                                        f"{100 - parkinsons_prediction_percentage:.2f}%.")
         
     st.success(parkinsons_diagnosis)
