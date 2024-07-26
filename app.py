@@ -1,8 +1,10 @@
 import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
+import numpy as np
+from sklearn.preprocessing import StandardScaler
 
-# Loading models
+# Load models
 dia_model = pickle.load(open("./savedModels/Diabetes.sav", 'rb'))
 heart_model = pickle.load(open("./savedModels/Heart.sav", 'rb'))
 par_model = pickle.load(open("./savedModels/Parkinsons.sav", 'rb'))
@@ -14,6 +16,14 @@ def get_prediction(model, input_data):
     else:
         prediction = model.predict(input_data)
         return prediction[0]
+
+def normalize_input(input_data, scaler):
+    return scaler.transform(input_data)
+
+# Assuming you have saved scalers from training data normalization
+dia_scaler = pickle.load(open("./savedModels/Diabetes_scaler.sav", 'rb'))
+heart_scaler = pickle.load(open("./savedModels/Heart_scaler.sav", 'rb'))
+par_scaler = pickle.load(open("./savedModels/Parkinsons_scaler.sav", 'rb'))
 
 # Sidebar for navigation
 with st.sidebar:
@@ -57,9 +67,8 @@ if selected == 'Diabetes Screening':
     diab_diagnosis = ''
     
     if st.button('Diabetes Test Result'):
-        # Ensure all inputs are provided and converted to float
         try:
-            input_data = [[
+            input_data = np.array([[
                 float(Pregnancies) if Pregnancies else 0.0,
                 float(Glucose) if Glucose else 0.0,
                 float(BloodPressure) if BloodPressure else 0.0,
@@ -68,12 +77,8 @@ if selected == 'Diabetes Screening':
                 float(BMI) if BMI else 0.0,
                 float(DiabetesPedigreeFunction) if DiabetesPedigreeFunction else 0.0,
                 float(Age) if Age else 0.0
-            ]]
-        except ValueError:
-            st.error("Please enter valid numeric values for all fields.")
-            input_data = None
-        
-        if input_data:
+            ]])
+            input_data = normalize_input(input_data, dia_scaler)
             diab_prediction = get_prediction(dia_model, input_data)
             diab_prediction_percentage = diab_prediction * 100
             
@@ -83,6 +88,8 @@ if selected == 'Diabetes Screening':
             else:
                 diab_diagnosis = (f'The person is predicted to not be diabetic with a confidence interval of '
                                   f'{100 - diab_prediction_percentage:.2f}%.')
+        except ValueError:
+            st.error("Please enter valid numeric values for all fields.")
         
     st.success(diab_diagnosis)
 
@@ -134,9 +141,8 @@ if selected == 'Heart Health Screening':
     heart_diagnosis = ''
     
     if st.button('Heart Disease Test Result'):
-        # Ensure all inputs are provided and converted to float
         try:
-            input_data = [[
+            input_data = np.array([[
                 float(age) if age else 0.0,
                 float(sex) if sex else 0.0,
                 float(cp) if cp else 0.0,
@@ -150,12 +156,8 @@ if selected == 'Heart Health Screening':
                 float(slope) if slope else 0.0,
                 float(ca) if ca else 0.0,
                 float(thal) if thal else 0.0
-            ]]
-        except ValueError:
-            st.error("Please enter valid numeric values for all fields.")
-            input_data = None
-        
-        if input_data:
+            ]])
+            input_data = normalize_input(input_data, heart_scaler)
             heart_prediction = get_prediction(heart_model, input_data)
             heart_prediction_percentage = heart_prediction * 100
             
@@ -165,6 +167,8 @@ if selected == 'Heart Health Screening':
             else:
                 heart_diagnosis = (f'The person is predicted to not have heart disease with a confidence interval of '
                                    f'{100 - heart_prediction_percentage:.2f}%.')
+        except ValueError:
+            st.error("Please enter valid numeric values for all fields.")
         
     st.success(heart_diagnosis)
 
@@ -243,9 +247,8 @@ if selected == "Parkinsons Screening":
     parkinsons_diagnosis = ''
     
     if st.button("Parkinson's Test Result"):
-        # Ensure all inputs are provided and converted to float
         try:
-            input_data = [[
+            input_data = np.array([[
                 float(fo) if fo else 0.0,
                 float(fhi) if fhi else 0.0,
                 float(flo) if flo else 0.0,
@@ -268,12 +271,8 @@ if selected == "Parkinsons Screening":
                 float(spread2) if spread2 else 0.0,
                 float(D2) if D2 else 0.0,
                 float(PPE) if PPE else 0.0
-            ]]
-        except ValueError:
-            st.error("Please enter valid numeric values for all fields.")
-            input_data = None
-        
-        if input_data:
+            ]])
+            input_data = normalize_input(input_data, par_scaler)
             parkinsons_prediction = get_prediction(par_model, input_data)
             parkinsons_prediction_percentage = parkinsons_prediction * 100
             
@@ -283,5 +282,7 @@ if selected == "Parkinsons Screening":
             else:
                 parkinsons_diagnosis = (f"The person is predicted to not have Parkinson's disease with a confidence interval of "
                                         f"{100 - parkinsons_prediction_percentage:.2f}%.")
+        except ValueError:
+            st.error("Please enter valid numeric values for all fields.")
         
     st.success(parkinsons_diagnosis)
